@@ -98,9 +98,46 @@ insert into produto (nome, preco, estoque, id_categoria) values
 ('Teclado Mecânico', 250.00, 15, 1),
 ('Mouse sem fio', 90.00, 40, 1),
 ('Cadeira Gamer', 899.00, 8, 2);
-
+ 
 #Atualizar o valor de um dado no campo já inserido
 update produto set preco = 239.90 where id_produto = 1;
 
 #Excluir registros especificos
 delete from produto where estoque = 0;
+
+# Consulta básica
+select nome, preco from produto where preco > 100;
+
+# Consulta básica sem condição
+select nome, preco from produto;
+
+#Consulta básica todos os campos sem condional
+select * from produto;
+
+#Consulta básica todos os campos com condicional
+select * from produto where preco > 100;
+
+SELECT nome, cidade
+FROM cliente
+WHERE cidade IN ('São Paulo', 'Campinas')
+AND nome LIKE 'A%' AND
+data_cadastro BETWEEN '2026-01-01' AND '2026-12-31';
+
+insert into cliente (nome, email, cidade) values
+('Gustavo Marcondes', 'gu.M@email.com', 'São Paulo'),
+('João Victor Toth', 'jut@mail.com', 'Campinas'),
+('Alice Silva', 'alice.silva@outlook.com', 'Campinas'),
+('Isis Marcondes', 'isis.marc@email.com', 'Cajati'),
+('Iury Guedes', 'iury.guedes@gmail.com', 'Registro');
+
+select * from cliente;
+
+# Retornar o nome, cidade, email dos clientes que possuem email @outlook
+SELECT nome, cidade, email
+FROM cliente
+WHERE email LIKE '%outlook%';
+
+# Retornar produtos que tenham preco entre 50,00 a 300,00
+SELECT *
+FROM produto
+WHERE preco BETWEEN 50.00 AND 300.00;

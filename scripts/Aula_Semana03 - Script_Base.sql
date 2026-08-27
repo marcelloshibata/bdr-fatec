@@ -251,3 +251,47 @@ INNER JOIN categoria
 ON categoria.id_categoria = produto.id_categoria
 GROUP BY produto.id_categoria
 ORDER BY produto.id_categoria;
+
+# Having - Quais categorias possuem preço médio mairo que 500
+SELECT id_categoria, round(avg(preco),2)
+AS 'Preço Médio'
+FROM produto
+GROUP BY id_categoria
+HAVING avg (preco) > 500;
+
+# Inner Join
+SELECT p.nome
+AS "Produto", c.nome AS "Categoria", p.preco AS "Valor"
+FROM produto p
+INNER JOIN categoria c 
+ON p.id_categoria = c.id_categoria;
+
+# Group by + inner join - Quantos produtos exisstem em cada categoria
+SELECT c.nome
+AS "Categoria",
+count(p.id_produto) as 'Quantidade'
+FROM categoria c
+INNER JOIN produto p
+ON c.id_categoria = p.id_categoria
+GROUP BY c.nome;
+
+# LEFT JOIN
+SELECT c.nome
+AS "Categoria",
+p.nome AS "Produto"
+FROM categoria c
+LEFT JOIN produto p
+ON c.id_categoria = p.id_categoria;
+
+# Quais clientes estão cadastrados mas nunca compraram?
+SELECT c.nome
+AS "Cliente"
+FROM cliente c
+LEFT JOIN pedido p
+ON c.id_cliente = p.id_cliente
+WHERE p.id_pedido
+IS NULL;
+
+# Quem comprou e em qual pedido comprou?
+SELECT c.nome
+AS "Cliente"

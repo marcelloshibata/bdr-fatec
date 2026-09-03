@@ -2524,7 +2524,7 @@ BETWEEN 6.00
 AND 15.00
 ORDER BY preco;
 
-# 2. Localize clientes de Registro, Cajati ou Iguape cujo nome comece com a letra A e cujo cadastro tenha sido realizado entre 01/01/2025 e 31/12/2025. Ordene por cidade e, dentro de cada cidade, por nome.
+-- # 2. Localize clientes de Registro, Cajati ou Iguape cujo nome comece com a letra A e cujo cadastro tenha sido realizado entre 01/01/2025 e 31/12/2025. Ordene por cidade e, dentro de cada cidade, por nome.
 SELECT *
 FROM cliente
 WHERE cidade
@@ -2536,3 +2536,12 @@ AND '2025-12-31'
 ORDER BY cidade ASC, nome ASC;
 
 # 3. Mostre os produtos cujo nome contenha a palavra 'Orgânica' ou 'Orgânico' e que possuam estoque superior a 20 unidades. Exiba nome, preço e estoque.
+SELECT p.nome, p.preco, p.estoque
+FROM produto p
+WHERE nome
+LIKE '%Orgânica%'
+OR nome 
+LIKE '%Orgânico%'
+AND estoque > 20;
+
+# 4. Liste os pedidos realizados entre 01/06/2026 e 31/08/2026 nas lojas 1, 2 ou 3. Exiba o código do pedido, a data, o cliente e a loja, ordenando da data mais recente para a mais antiga.

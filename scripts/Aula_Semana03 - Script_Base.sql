@@ -294,4 +294,83 @@ IS NULL;
 
 # Quem comprou e em qual pedido comprou?
 SELECT c.nome
-AS "Cliente"
+AS "Cliente";
+
+# Subconsultas
+SELECT nome, preco
+FROM produto
+WHERE preco > (SELECT avg(preco) FROM produto);
+
+/* Nesse exemplo, a subconsulta calcula o preço médio e a consulta externa retorna os produtos acima dessa média.*/
+
+# Subconsultas com listas e existência
+# Quando a subconsulta retorna vários valores, usam-se os operadores
+# IN, EXISTS, ANY e ALL. O IN verifica se um valor pertence ao conjunto retornado.
+# O EXISTS testa apenas se a subconsulta produz alguma linha, sendo bastante eficiente
+# para verificar existência. O exemplo busca clientes que fizeram ao menos um pedido
+
+SELECT nome
+FROM cliente c
+WHERE EXISTS
+(SELECT 1 FROM pedido p WHERE p.id_cliente = c.id_cliente);
+
+# Subconsulta no FROM e no SELECT
+# A subconsulta também pode aparecer na clausula FROM,
+# funcionando como uma tabela temporária, ou na lista de colunas do SELECT,
+# retornando um valor único por linha. O exemploa seguir mostra cada 
+# categoria ao lado da quantidade de produtos, calculada por uma subconsulta no SELECT
+
+SELECT c.nome,
+(SELECT count(*) FROM produto p
+WHERE p.id_categoria = c.id_categoria)
+AS "Quantidade de produtos"
+FROM categoria c;
+
+# Organizando com CTEs e combinando com UNION
+# Consultas longas tornam-se dificeis de ler quando muitas subconsultas se aninham,
+# A common Table Expression (CTE), introduzida pela clausula WITH, da nome a um resultado
+# intermediario e melhora a clareza. Ela é especialmente util quando o mesmo subresultado
+# é referneciado mais de uma vez.
+
+WITH faturamento_cliente
+AS
+(SELECT p.id_cliente,
+sum(ip.quantidade * ip.preco_unitario)
+AS "Total"
+FROM pedido p
+JOIN item_pedido ip
+ON p.id_pedido = ip.id_pedido
+GROUP BY p.id_cliente)
+SELECT c.nome, f.total
+FROM faturamento_cliente f
+JOIN cliente c
+ON c.id_cliente = f.id_cliente
+WHERE f.total > 500;
+
+# Funções internas
+# Os SGBDs oferecem um conjunto amplo de funções internas que
+# processam valores durante a consulta. As funções de texto manipulam
+# cadeias de caracteres. CONCAT junta Strings, UPPER e LOWER alteram a caixa,
+# SUBSTRING extrai um trecho, LENGTH mede o comprimento e TRIM remove espaços nas extremidades
+
+SELECT concat(nome, ' (', cidade, ')')
+AS "Identificação",
+upper(cidade) AS "Cidade em Maiusculo"
+FROM cliente;
+
+# Função Interna de tempo
+# As funções de data permitem extrair e calcular informações temporais.
+# NOW retorna o instante atual, DATEDIFF calcula a diferença entre datas
+# e funções de formatação ajustam a exibição. O exemplo apura há quantos
+# dias cada cliente está cadastrado.
+
+SELECT nome, datediff(current_date, data_cadastro)
+AS "Dias de Cadastro"
+FROM cliente;
+
+# Funções númericas e condicionais
+# As funções numéricas arredondam e ajustam valores
+# ROUND arredonda, FLOOR e CEIL aproximam para baixo e para cima.
+# Já as funções condicionais decidem o valor de saida conforme uma regra.
+# O comando CASE funciona como uma estrutura de decisão dentor da consulta,
+# e COALESCE substitui valores nulos por uma alternativa

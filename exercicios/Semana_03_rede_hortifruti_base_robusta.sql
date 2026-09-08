@@ -2545,3 +2545,60 @@ LIKE '%Orgânico%'
 AND estoque > 20;
 
 # 4. Liste os pedidos realizados entre 01/06/2026 e 31/08/2026 nas lojas 1, 2 ou 3. Exiba o código do pedido, a data, o cliente e a loja, ordenando da data mais recente para a mais antiga.
+SELECT p.id_pedido, p.data_pedido, c.nome AS "Nome Cliente", l.nome AS "Nome Loja"
+FROM pedido p 
+INNER JOIN cliente c ON p.id_cliente = c.id_cliente
+INNER JOIN loja l ON p.id_loja = l.id_loja
+WHERE p.data_pedido
+BETWEEN '2026-06-01' AND '2026-08-31'
+AND p.id_loja IN (1, 2, 3)
+ORDER BY p.data_pedido DESC;
+
+# BLOCO B
+# 5. Apresente um resumo geral do cadastro de produtos contendo: quantidade total de produtos, preço médio, menor preço e maior preço. Use aliases claros para cada resultado.
+SELECT COUNT(*)
+AS "Quantidade Total de Produtos",
+AVG(preco) AS "Preço Médio",
+MIN(preco) AS "Menor Preço",
+MAX(preco) AS "Maior preço"
+FROM produto;
+
+# 6. Calcule o valor financeiro estimado do estoque atual da rede, considerando preco x estoque para cada produto e somando o resultado de todos eles.
+SELECT SUM(preco * estoque) AS "Valor total do Estoque"
+FROM produto;
+
+# 7. Mostre, para cada categoria, a quantidade de produtos cadastrados, o preço médio, o menor preço e o maior preço. Ordene da maior para a menor média de preço.
+SELECT c.nome AS "Categoria",
+COUNT(p.id_produto) AS "Quantidade de Produtos",
+AVG(p.preco) AS "Preço Médio",
+MIN(p.preco) AS "Menor Preço",
+MAX(p.preco) AS "Maior preço"
+FROM categoria c
+INNER JOIN produto p ON p.id_categoria = c.id_categoria
+GROUP BY c.id_categoria, c.nome
+ORDER BY AVG(p.preco) DESC;
+
+# 8. Exiba somente as categorias que possuam pelo menos 8 produtos cadastrados e preço médio superior a R$ 10,00.
+SELECT c.nome AS "Categoria",
+COUNT(p.id_produto) AS "Quantidade de Produtos",
+AVG(p.preco) AS "Preço Médio"
+FROM categoria c
+INNER JOIN produto p ON p.id_categoria = c.id_categoria
+GROUP BY c.id_categoria, c.nome
+HAVING AVG(p.preco) > 10.00 AND COUNT(p.id_produto) > 8;
+
+# 9. Calcule quantos pedidos foram registrados por loja e mostre apenas as unidades que tenham mais de 70 pedidos no período disponível na base.
+SELECT l.nome AS "Loja",
+COUNT(p.id_pedido) AS "Quantidade de Pedidos"
+FROM loja l
+INNER JOIN pedido p On p.id_loja = l.id_loja
+GROUP BY l.id_loja, l.nome
+HAVING COUNT(p.id_pedido) > 70;
+
+# 10. Apresente a quantidade de clientes cadastrados por cidade e mostre somente cidades com mais de 15 clientes. Ordene da maior para a menor quantidade.
+SELECT c.cidade AS "Cidade",
+COUNT(c.id_cliente) AS "Quantidade de Clientes"
+FROM cliente c
+GROUP BY c.cidade
+HAVING COUNT(c.id_cliente) > 15
+ORDER BY COUNT(c.id_cliente) DESC;

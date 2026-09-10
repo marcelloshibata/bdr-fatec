@@ -2602,3 +2602,35 @@ FROM cliente c
 GROUP BY c.cidade
 HAVING COUNT(c.id_cliente) > 15
 ORDER BY COUNT(c.id_cliente) DESC;
+
+# 11. Liste todos os produtos com o nome de sua categoria. Exiba produto, categoria, preço e estoque, ordenando primeiro pela categoria e depois pelo produto.
+SELECT p.nome AS "Produto",
+c.nome AS "Categoria",
+p.preco AS "Preço",
+p.estoque AS "Estoque"
+FROM produto p
+INNER JOIN categoria c ON c.id_categoria = p.id_categoria
+ORDER BY c.nome ASC, p.nome ASC;
+
+# 12. Mostre todos os pedidos com nome do cliente, data da compra, nome da loja e cidade da unidade. Ordene da venda mais recente para a mais antiga.
+SELECT c.nome AS "Cliente",
+p.data_pedido AS "Data da Compra",
+l.nome AS "Loja",
+l.cidade AS "Cidade da Unidade"
+FROM pedido p
+INNER JOIN cliente c ON c.id_cliente = p.id_cliente
+INNER JOIN loja l ON l.id_loja = p.id_loja
+ORDER BY p.data_pedido ASC;
+
+# 13. Identifique clientes cadastrados que nunca fizeram nenhum pedido. A saída deve mostrar o código do cliente, nome, cidade e data de cadastro.
+SELECT c.id_cliente AS "Código",
+c.nome AS "Nome Cliente",
+c.cidade AS "Cidade",
+c.data_cadastro AS "Data Cadastro"
+FROM cliente c
+LEFT JOIN pedido p ON c.id_cliente = p.id_cliente
+WHERE p.id_pedido IS NULL;
+
+# 14. Identifique produtos cadastrados que nunca apareceram em item_pedido. Exiba produto, categoria, preço e estoque atual.
+
+ 

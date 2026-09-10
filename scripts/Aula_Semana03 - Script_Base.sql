@@ -374,3 +374,55 @@ FROM cliente;
 # Já as funções condicionais decidem o valor de saida conforme uma regra.
 # O comando CASE funciona como uma estrutura de decisão dentor da consulta,
 # e COALESCE substitui valores nulos por uma alternativa
+
+#Gatilhos (Triggers)
+# O que é um gatilho?
+# Um gatilho, ou trigger, é um bloco de código que o SGBD executa automatcamente
+# quando ocorre um evento em uma tabela, como uma inserção, uma atualização ou uma exclusão,
+# Diferente do procedimento, que precisa ser chamado, o gatilho dispara sozinho.
+# Isso o torna ideal para tarefas que devem acontecer sem depender da aplicação
+# como registrar ou validar uma regra.
+
+delimiter $$
+CREATE TRIGGER tg_valida_preco
+BEFORE INSERT ON produto
+FOR EACH ROW
+BEGIN
+	IF NEW.preco < 0 then
+    SIGNAL SQLSTATE '45000'
+    SET message_text = "Preço não pode ser negativo";
+    END IF;
+END$$
+delimiter ;
+
+INSERT INTO produto (nome, preco, estoque, id_categoria) VALUES
+("Apagador Quadro Branco", "3.00", 30, 2);
+
+# Os gatilhos são classificados pelo momento e pelo evento
+# Quanto ao momento, podem ser BEFORE, executados antes da operação,
+# ou AFTER, executados depois. Quanto ao evento, respondem a INSERT,
+# UPDATE ou DELETE. Dentro do gatilho, as referências NEW e OLD dão
+# acesso aos valores novos e antigos da linha afetada
+
+# Criar uma tabela de Log para auditoria
+CREATE TABLE log_preco(
+id_log int PRIMARY KEY AUTO_INCREMENT,
+id_produto int,
+preco_antigo Decimal(10,2),
+preco_novo Decimal(10,2),
+alterado_em DATETIME DEFAULT current_timestamp
+);
+
+delimiter $$
+CREATE TRIGGER tg_log_preco
+AFTER UPDATE ON produto
+FOR EACH ROW
+BEGIN
+	IF old.preco <> new.preco THEN
+		INSERT INTO log_preco(id_produto, preco_antigo, preco_novo)
+        VALUES (old.id_produto, old.preco, new.preco);
+	END IF;
+END $$
+delimiter ;
+
+UPDATE produto SET preco = 14.00 WHERE id_produto = 20;

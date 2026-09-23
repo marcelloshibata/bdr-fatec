@@ -426,3 +426,24 @@ END $$
 delimiter ;
 
 UPDATE produto SET preco = 14.00 WHERE id_produto = 20;
+
+SELECT * FROM produto WHERE id_produto = 1;
+SELECT * FROM pedido WHERE id_cliente = 1;
+
+# Transação (transaction)
+START TRANSACTION; #inicia uma transação
+UPDATE produto SET estoque = estoque -2 WHERE id_produto = 1;
+INSERT INTO pedido (id_cliente, data_pedido) VALUES (1, '2026-03-20');
+commit;
+rollback;
+
+SELECT
+pedido.id_pedido AS "ID",
+produto.nome AS "Produto",
+cliente.nome AS "Nome Cliente"
+FROM item_pedido
+JOIN produto ON produto.id_produto = item_pedido.id_produto
+JOIN pedido ON pedido.id_pedido = item_pedido.id_pedido
+JOIN cliente ON cliente.id_cliente = pedido.id_cliente;
+
+CREATE INDEX idx_nomeProd ON produto(nome);
